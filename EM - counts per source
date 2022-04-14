@@ -1,0 +1,23 @@
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT count(distinct email_txt)  --26,536,269
+  FROM [CDL].[dbo].[email_summary]
+  
+
+  /****** Script for SelectTopNRows command from SSMS  ******/
+SELECT count(distinct mkt_email_cleansed), count(distinct mkt_email)  -- raw 13,880,030	   cleansed 13,887,472
+  FROM [CDL].[dbo].[AR_EM_FEED]
+  
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT count(distinct email)  --3,883
+  FROM [CDL].[dbo].[COLOR_AD_COMP_CONTACTS_PNTRS]
+  
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT count(distinct email)  --5,610,611
+  FROM [CDL].[dbo].[MYSW_PROFILE]
+  
+
+   /****** Script for SelectTopNRows command from SSMS  ******/
+SELECT count(distinct MASTER_KEY)  --16,729,400
+  FROM [CDL].[dbo].[WCA_MASTERDB_INC]
