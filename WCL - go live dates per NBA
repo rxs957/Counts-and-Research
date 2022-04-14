@@ -1,0 +1,13 @@
+drop table if exists #temp_wcl_go_live_dates
+
+select promo_cd, min(cip_date) as first_week_live, year(min(cip_date)) as year_went_live
+into #temp_wcl_go_live_dates
+from cdl..cip_wcl
+group by promo_cd
+order by min(cip_date) desc
+
+
+select year_went_live, count(distinct promo_cd) as count_of_promos
+from #temp_wcl_go_live_dates
+group by year_went_live
+order by year_went_live desc
