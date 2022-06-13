@@ -1,0 +1,140 @@
+drop table if exists #wcl_current_week 
+select account_no, promo_cd, cip_date 
+into #wcl_current_week
+from cdl..cip_wcl
+where cip_date > getdate()-7
+and control_flag='0'
+
+drop table if exists #wcl_1_week_ago 
+select account_no, promo_cd, cip_date 
+into #wcl_1_week_ago
+from cdl..cip_wcl
+where cip_date > getdate()-14
+and
+cip_date < getdate()-7
+and control_flag='0'
+
+drop table if exists #wcl_2_weeks_ago 
+select account_no, promo_cd, cip_date 
+into #wcl_2_weeks_ago
+from cdl..cip_wcl
+where cip_date > getdate()-21
+and
+cip_date < getdate()-14
+and control_flag='0'
+
+drop table if exists #wcl_3_weeks_ago 
+select account_no, promo_cd, cip_date 
+into #wcl_3_weeks_ago
+from cdl..cip_wcl
+where cip_date > getdate()-28
+and
+cip_date < getdate()-21
+and control_flag='0'
+
+drop table if exists #wcl_4_weeks_ago 
+select account_no, promo_cd, cip_date 
+into #wcl_4_weeks_ago
+from cdl..cip_wcl
+where cip_date > getdate()-35
+and
+cip_date < getdate()-28
+and control_flag='0'
+
+drop table if exists #wcl_5_weeks_ago 
+select account_no, promo_cd, cip_date 
+into #wcl_5_weeks_ago
+from cdl..cip_wcl
+where cip_date > getdate()-42
+and
+cip_date < getdate()-35
+and control_flag='0'
+
+drop table if exists #wcl_6_weeks_ago 
+select account_no, promo_cd, cip_date 
+into #wcl_6_weeks_ago
+from cdl..cip_wcl
+where cip_date > getdate()-49
+and
+cip_date < getdate()-42
+and control_flag='0'
+
+drop table if exists #wcl_7_weeks_ago 
+select account_no, promo_cd, cip_date 
+into #wcl_7_weeks_ago
+from cdl..cip_wcl
+where cip_date > getdate()-56
+and
+cip_date < getdate()-49
+and control_flag='0'
+
+drop table if exists #wcl_8_weeks_ago  
+select account_no, promo_cd, cip_date 
+into #wcl_8_weeks_ago
+from cdl..cip_wcl
+where cip_date > getdate()-63
+and
+cip_date < getdate()-56
+and control_flag='0'
+
+drop table if exists #wcl_union 
+Select x.* into #wcl_union from 
+(SELECT * FROM #wcl_current_week
+UNION
+SELECT * FROM #wcl_1_week_ago
+UNION
+SELECT * FROM #wcl_2_weeks_ago
+UNION
+SELECT * FROM #wcl_3_weeks_ago
+UNION
+SELECT * FROM #wcl_4_weeks_ago
+UNION
+SELECT * FROM #wcl_5_weeks_ago
+UNION
+SELECT * FROM #wcl_6_weeks_ago
+UNION
+SELECT * FROM #wcl_7_weeks_ago
+UNION
+SELECT * FROM #wcl_8_weeks_ago) x
+
+drop table if exists #wcl_appearances
+select account_no, count(account_no) as [num_of_wcl_appearances]
+into #wcl_appearances
+from #wcl_union
+group by account_no
+
+drop table if exists #wcl_rollups
+select distinct z.account_no, 
+y.num_of_wcl_appearances,
+a.promo_cd as NBA_Curr_Week,
+b.promo_cd as NBA_1_Week_Ago,
+c.promo_cd as NBA_2_Weeks_Ago,
+d.promo_cd as NBA_3_Weeks_Ago,
+e.promo_cd as NBA_4_Weeks_Ago,
+f.promo_cd as NBA_5_Weeks_Ago,
+g.promo_cd as NBA_6_Weeks_Ago,
+h.promo_cd as NBA_7_Weeks_Ago,
+i.promo_cd as NBA_8_Weeks_Ago
+into #wcl_rollups
+from cdl..cip_wcl z
+left join #wcl_current_week a on a.account_no=z.account_no
+left join #wcl_1_week_ago b on b.account_no=z.account_no
+left join #wcl_2_weeks_ago c on c.account_no=z.account_no
+left join #wcl_3_weeks_ago d on d.account_no=z.account_no
+left join #wcl_4_weeks_ago e on e.account_no=z.account_no
+left join #wcl_5_weeks_ago f on f.account_no=z.account_no
+left join #wcl_6_weeks_ago g on g.account_no=z.account_no
+left join #wcl_7_weeks_ago h on h.account_no=z.account_no
+left join #wcl_8_weeks_ago i on i.account_no=z.account_no
+left join #wcl_appearances y on y.account_no=z.account_no
+where z.cip_date > getdate() -63
+and control_flag='0'
+order by num_of_wcl_appearances desc
+
+select num_of_wcl_appearances, count(num_of_wcl_appearances)
+from #wcl_rollups
+group by num_of_wcl_appearances
+order by num_of_wcl_appearances asc
+
+select * from #wcl_rollups
+order by num_of_wcl_appearances desc
