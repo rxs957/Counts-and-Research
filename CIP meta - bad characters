@@ -1,0 +1,6 @@
+select * from cdl..cip_metadata
+where nba_loi like '%??%'
+or nba_loi like '%n?t%'
+or promo_script like '%??%'
+or promo_script like '%n?t%'
+order by nba_code asc
