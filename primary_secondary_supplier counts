@@ -1,0 +1,15 @@
+SELECT distinct l.[account_no]
+  FROM cdl.[dbo].[LEADGEN_CUSTOMER] l
+ join cdl..customer c on l.account_no=c.account_no
+ where c.diy_whl='whl' and c.account_deleted_flg='N' 
+  and (
+  primary_supplier_name in ('PPG/Porter/ICI/Dulux/Betonel','Home Depot - PPG')
+  or secondary_supplier_name in ('PPG/Porter/ICI/Dulux/Betonel','Home Depot - PPG')
+  )
+
+  select distinct primary_supplier_name, secondary_supplier_name, count(distinct l.account_no)
+    FROM CDL.[dbo].[LEADGEN_CUSTOMER] l
+ join cdl..customer c on l.account_no=c.account_no
+ where c.diy_whl='whl' and c.account_deleted_flg='N' 
+	group by primary_supplier_name, secondary_supplier_name
+	order by primary_supplier_name asc, secondary_supplier_name asc
