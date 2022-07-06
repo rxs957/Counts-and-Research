@@ -1,0 +1,19 @@
+/****** Script for SelectTopNRows command from SSMS  ******/
+  drop table if exists #temp1
+  select account_no, count(mkt_email) as em_count
+  into #temp1
+    FROM [CLIENT].[dbo].[AR_EM_FEED]
+	group by account_no
+	order by count(mkt_email) desc
+	  drop table if exists #temp2
+	  select mkt_email, count(account_no) as an_count
+	  into #temp2
+    FROM [CLIENT].[dbo].[AR_EM_FEED]
+	group by mkt_email
+	order by count(account_no) desc
+	select  case when em_count > 1 then 'Dupes' else 'Fine' end as status, count(account_no) as count_accts
+	from #temp1
+	group by case when em_count > 1 then 'Dupes' else 'Fine' end
+	select  case when an_count > 1 then 'Dupes' else 'Fine' end as status, count(mkt_email) as count_emails
+	from #temp2
+	group by case when an_count > 1 then 'Dupes' else 'Fine' end
